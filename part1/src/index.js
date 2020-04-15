@@ -1,17 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-const App = () => {
-  const now = new Date()
-  const a = 10
-  const b = 20
-
+const Hello = () => {
   return (
     <div>
-      <p>Hello World. it is {now.toString()}</p>
-      <p>
-        {a} plus {b} = {a + b}
-      </p>
+      <p>Hello world.</p>
+    </div>
+  )
+}
+
+const App = () => {
+  return (
+    <div>
+      <h1>Greetings</h1>
+      <Hello />
+      <Hello />
+      <Hello />
     </div>
   )
 }
