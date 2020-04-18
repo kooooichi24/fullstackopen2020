@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 
-const DisplayAnecdote = ({ points, index }) => {
+const DisplayAnecdote = ({ text, points }) => {
   return (
     <div>
-      <div>{anecdotes[index]}</div>
-      <div>has {points[index]} votes</div>
+      <div>{text}</div>
+      <div>has {points} votes</div>
     </div>
   )
 }
@@ -36,12 +36,12 @@ const App = ({ anecdotes }) => {
   return (
     <div>
       <h1>Anecdotes of the day</h1>
-      <DisplayAnecdote points={points} index={selected} />
+      <DisplayAnecdote text={anecdotes[selected]} points={points.selected} />
       <Button handleClick={handleVote} text="vote" />
       <Button handleClick={handleNext} text="next anecdotes" />
 
       <h1>Anecdotes with most votes</h1>
-      <DisplayAnecdote points={points} index={maxVoteIndex} />
+      <DisplayAnecdote text={anecdotes[maxVoteIndex]} points={points[maxVoteIndex]} />
     </div>
   )
 }
