@@ -22,16 +22,22 @@ const Statistics = ({ good, neutral, bad }) => {
     positive: ((good / totalCount) * 100) + " %"
   }
 
-  return (
-    <div>
-      <DisplayResult value={good} text="good" />
-      <DisplayResult value={neutral} text="neutral" />
-      <DisplayResult value={bad} text="bad" />
-      <div>all {statistics.all}</div>
-      <div>average {statistics.average}</div>
-      <div>positive {statistics.positive}</div>
-    </div>
-  )
+  if (good === 0 && neutral === 0 && bad === 0) {
+    return (
+      <div>No feedback given</div>
+    )
+  } else {
+    return (
+      <div>
+        <DisplayResult value={good} text="good" />
+        <DisplayResult value={neutral} text="neutral" />
+        <DisplayResult value={bad} text="bad" />
+        <div>all {statistics.all}</div>
+        <div>average {statistics.average}</div>
+        <div>positive {statistics.positive}</div>
+      </div>
+    )
+  }
 }
 
 const App = (props) => {
