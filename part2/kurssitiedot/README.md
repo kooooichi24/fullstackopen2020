@@ -1,0 +1,1 @@
+# fullstackopen2020/part2/kurssitiedot
