@@ -30,13 +30,28 @@ const App = () => {
       number: newNumber
     }
 
-    personServices
-      .create(personObject)
-      .then(returnObject => {
-        setPersons(persons.concat(returnObject))
-        setNewName('')
-        setNewNumber('')
-      })
+    const index = persons.findIndex(p => p.name === newName)
+    if (index > -1) {
+      const id = persons[index].id
+      const person = persons.find(p => p.id === id)
+      const changedPerson = { ...person, number: newNumber }
+      
+      personServices
+        .update(id, changedPerson)
+        .then(returnedPerson => {
+          setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
+    } else {
+      personServices
+        .create(personObject)
+        .then(returnObject => {
+          setPersons(persons.concat(returnObject))
+          setNewName('')
+          setNewNumber('')
+        })
+    }
   }
 
   const handlePersonChange = (event) => {
