@@ -58,6 +58,17 @@ const App = () => {
     setFilterText(event.target.value)
   }
 
+  const deletePersonOf = (deletePerson) => {
+    const message = `Delete ${deletePerson.name} ?`
+    if (window.confirm(message)) {
+      personServices
+        .deletePerson(deletePerson.id)
+        .then(response => {
+          setPersons(persons.filter(person => person.id !== deletePerson.id))
+        })
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -73,7 +84,7 @@ const App = () => {
       />
       
       <h2>Numbers</h2>
-      <Persons persons={persons} filterText={filterText} />
+      <Persons persons={persons} filterText={filterText} deletePerson={deletePersonOf} />
     </div>
   )
 }
