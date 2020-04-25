@@ -1,10 +1,10 @@
 import axios from 'axios'
 
-const baseUrl = 'https://restcountries.eu/rest/v2/name'
+const baseUrl = 'https://restcountries.eu/rest/v2/all'
 
-const getByName= (name) => {
-  const request = axios.get(`${baseUrl}/${name}`)
+const getAll = () => {
+  const request = axios.get(baseUrl)
   return request.then(response => response.data)
 }
 
-export default { getByName }
+export default { getAll }

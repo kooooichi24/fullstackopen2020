@@ -1,7 +1,8 @@
 import React from 'react'
 
-const Weather = ({ weather }) => {
-  if (weather === null) {
+const Weather = ({ weather, city }) => {
+  console.log(weather)
+  if (!weather) {
     return null
   }
 
@@ -11,14 +12,14 @@ const Weather = ({ weather }) => {
   }
   return (
     <div>
-      <h2>Weather in {weather.location.name}</h2>
-      <p><b>temperature: </b>{weather.current.temperature} Celius</p>
+      <h2>Weather in {city}</h2>
+      <p><b>temperature: </b>{weather.temperature} Celius</p>
       <img 
-        src={weather.current.weather_icons[0]}
-        alt={weather.current.weather_descriptions[0]}
+        src={weather.weather_icons[0]}
+        alt={weather.weather_descriptions[0]}
         style={style}
       />
-      <p><b>wind: </b>{weather.current.wind_speed} mph direction {weather.current.wind_dir}</p>
+      <p><b>wind: </b>{weather.wind_speed} mph direction {weather.wind_dir}</p>
     </div>
   )
 }
