@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'
+import personServices from './services/persons'
 
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
@@ -14,11 +14,11 @@ const App = () => {
 
   const hook = () => {
     console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
+    personServices
+      .getAll()
+      .then(initialState => {
         console.log('promise fulfilled')
-        setPersons(response.data)
+        setPersons(initialState)
       })
   }
   useEffect(hook, [])
@@ -29,13 +29,17 @@ const App = () => {
       name: newName,
       number: newNumber
     }
-    setPersons(persons.concat(personObject))
-    setNewName('')
-    setNewNumber('')
+
+    personServices
+      .create(personObject)
+      .then(returnObject => {
+        setPersons(persons.concat(returnObject))
+        setNewName('')
+        setNewNumber('')
+      })
   }
 
   const handlePersonChange = (event) => {
-    console.log(event.target.value)
     setNewName(event.target.value)
 
     persons.forEach(person => {
@@ -46,7 +50,6 @@ const App = () => {
   }
 
   const handleNumberChange = (event) => {
-    console.log(event.target.value)
     setNewNumber(event.target.value)
   }
 
