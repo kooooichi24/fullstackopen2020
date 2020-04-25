@@ -4,7 +4,8 @@ import personServices from './services/persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
-import Notification from './components/Notification'
+import SuccessNotification from './components/SuccessNotification'
+import ErrorNotification from './components/ErrorNotification'
 
 const App = () => {
   const [ persons, setPersons ] = useState([])
@@ -12,6 +13,7 @@ const App = () => {
   const [ newNumber, setNewNumber ] = useState('')
   const [ filterText, setFilterText ] = useState('')
   const [ successMessage, setSuccessMessage ] = useState(null)
+  const [ errorMessage, setErrorMessage ] = useState(null)
 
   useEffect(() => {
     console.log('effect')
@@ -29,6 +31,15 @@ const App = () => {
     )
     setTimeout(() => {
       setSuccessMessage(null)
+    }, 5000)
+  }
+
+  const displayErrorMessage = (name) => {
+    setErrorMessage(
+      `Information of ${name} has already been removed from server`
+    )
+    setTimeout(() => {
+      setErrorMessage(null)
     }, 5000)
   }
 
@@ -52,6 +63,12 @@ const App = () => {
           setNewName('')
           setNewNumber('')
           displaySuccessMessage(returnedPerson.name)
+        })
+        .catch(error => {
+          setPersons(persons.filter(person => person.id !== id))
+          setNewName('')
+          setNewNumber('')
+          displayErrorMessage(changedPerson.name)
         })
     } else {
       personServices
@@ -98,7 +115,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={successMessage} />
+      <SuccessNotification message={successMessage} />
+      <ErrorNotification message={errorMessage} />
       <Filter onChange={handleFiltereChange} filterText={filterText} />
 
       <h2>add a new</h2>
