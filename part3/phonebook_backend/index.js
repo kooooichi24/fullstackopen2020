@@ -76,13 +76,13 @@ app.post('/api/persons', (req, res) => {
     })
   }
   
-  // const existing = persons.find(p => p.name === body.name)
-  // console.log("existing", existing)
-  // if (existing) {
-  //   return res.status(400).json({
-  //     error: 'name must be unique'
-  //   })
-  // }
+  const existing = persons.find(p => p.name === body.name)
+  console.log("existing", existing)
+  if (existing) {
+    return res.status(400).json({
+      error: 'name must be unique'
+    })
+  }
 
   const person = new Person({
     name: body.name,
@@ -91,6 +91,20 @@ app.post('/api/persons', (req, res) => {
   person.save().then(savedPerson => {
     res.json(savedPerson.toJSON())
   })
+})
+
+app.put('/api/persons/:id', (req, res, next) => {
+  const body = req.body
+  const person = {
+    name: body.name,
+    number: body.number
+  }
+
+  Person.findByIdAndUpdate(req.params.id, person, { new: true })
+    .then(updatedPerson => {
+      res.json(updatedPerson.toJSON())
+    })
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (req, res, next) => {
