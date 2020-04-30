@@ -38,7 +38,7 @@ module.exports = {
             'error', { 'before': true, 'after': true }
         ],
         'no-console': 'off',
-        "no-unused-vars": ['off', {"vars" : "all", "args" : "after-used"} ],
-        "no-undef": 'warn',
+        'no-unused-vars': ['off', {'vars': 'all', 'args': 'after-used' }],
+        'no-undef': 'warn'
     }
 }

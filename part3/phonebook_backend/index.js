@@ -14,33 +14,10 @@ app.use(express.json())
 morgan.token('body', (req, res) => {
   const body = req.body
   return JSON.stringify(body)
-});
+})
 const loggerFormat = ':method :url :status :res[content-length] - :response-time ms :body'
 app.use(morgan(loggerFormat))
 
-
-let persons = [
-  {
-    name: "Arto Hellas",
-    number: "040-123456",
-    id: 1
-  },
-  {
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-    id: 2
-  },
-  {
-    name: "Dan Abramov",
-    number: "12-43-234345",
-    id: 3
-  },
-  {
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-    id: 4
-  }
-]
 
 app.get('/api/persons', (req, res) => {
   Person.find({}).then(persons => {
@@ -72,14 +49,6 @@ app.get('/api/info', (req, res) => {
 
 app.post('/api/persons', (req, res, next) => {
   const body = req.body
-  
-  const existing = persons.find(p => p.name === body.name)
-  console.log("existing", existing)
-  if (existing) {
-    return res.status(400).json({
-      error: 'name must be unique'
-    })
-  }
 
   const person = new Person({
     name: body.name,

@@ -27,15 +27,15 @@ const person = new Person({
 
 // create person
 person.save().then(response => {
-  console.log(`added ${name} number ${number} to phonebook`);
+  console.log(`added ${name} number ${number} to phonebook`)
   mongoose.connection.close()
 })
 
 // get person
 Person.find({}).then(persons => {
-  console.log("phonebook:");
+  console.log('phonebook:')
   persons.forEach(person => {
-    console.log(`${person.name} ${person.number}`);
+    console.log(`${person.name} ${person.number}`)
   })
   mongoose.connection.close()
 })
