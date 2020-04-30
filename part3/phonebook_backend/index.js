@@ -61,11 +61,13 @@ app.get('/api/persons/:id', (req, res, next) => {
 })
 
 app.get('/api/info', (req, res) => {
-  const message = `
-    <p>Phonebook has info for ${persons.length} peaple</p>
-    <p>${new Date()}</p>
-  `
-  res.send(message)
+  Person.find({}).then(persons => {
+    const message = `
+      <p>Phonebook has info for ${persons.length} peaple</p>
+      <p>${new Date()}</p>
+    `
+    res.send(message)
+  })
 })
 
 app.post('/api/persons', (req, res) => {
