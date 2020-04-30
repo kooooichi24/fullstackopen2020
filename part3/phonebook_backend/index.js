@@ -91,6 +91,22 @@ app.post('/api/persons', (req, res) => {
   })
 })
 
+const unknownEndPoint = (req, res) => {
+  res.status(404).send({ error: 'unknown endpoint' })
+}
+// handler of requests with unknown endpoint
+app.use(unknownEndPoint)
+
+const errorHandler = (error, req, res, next) => {
+  console.log(error.message)
+  if (error.name === 'CastError') {
+    return res.status(400).send({ error: 'malformatted id' })
+  }
+  next(error)
+}
+// handler of requests with result to errors
+app.use(errorHandler)
+
 const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
