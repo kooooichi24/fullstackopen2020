@@ -19,27 +19,6 @@ const requestLogger = (request, response, next) => {
 app.use(requestLogger)
 
 
-let notes = [
-  {
-    id: 1,
-    content: "HTML is easy",
-    date: "2019-05-30T17:30:31.098Z",
-    important: true
-  },
-  {
-    id: 2,
-    content: "Browser can execute only Javascript",
-    date: "2019-05-30T18:39:34.091Z",
-    important: false
-  },
-  {
-    id: 3,
-    content: "GET and POST are the most important methods of HTTP protocol",
-    date: "2019-05-30T19:20:14.298Z",
-    important: true
-  }
-]
-
 app.get('/api/notes', (req, res) => {
   Note.find({}).then(notes => {
     res.json(notes.map(n => n.toJSON()))
@@ -90,20 +69,20 @@ app.put('/api/notes/:id', (req, res, next) => {
 
 app.delete('/api/notes/:id', (req, res, next) => {
   Note.findByIdAndRemove(req.params.id)
-    .then(result => {
+    .then(result  => {
       res.status(204).end()
     })
     .catch(error => next(error))
 })
 
 const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint'})
+  response.status(404).send({ error: 'unknown endpoint' })
 }
 // handler of requests with unknown endpoint
 app.use(unknownEndpoint)
 
 const errorHandler = (error, request, response, next) => {
-  console.log(error.message);
+  console.log(error.message)
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
@@ -118,5 +97,5 @@ const PORT = process.env.PORT
 console.log(PORT)
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
-  console.log(`http://localhost:${PORT}`);
+  console.log(`http://localhost:${PORT}`)
 })
