@@ -1,13 +1,15 @@
 require('dotenv').config()
 const express = require('express')
-const cors = require('cors')
 const app = express()
 const morgan = require('morgan')
 const Person = require('./models/person')
 
-app.use(express.static('build'))
+const cors = require('cors')
+
 app.use(cors())
+app.use(express.static('build'))
 app.use(express.json())
+
 
 morgan.token('body', (req, res) => {
   const body = req.body
@@ -15,6 +17,7 @@ morgan.token('body', (req, res) => {
 });
 const loggerFormat = ':method :url :status :res[content-length] - :response-time ms :body'
 app.use(morgan(loggerFormat))
+
 
 let persons = [
   {
@@ -45,10 +48,16 @@ app.get('/api/persons', (req, res) => {
   })
 })
 
-app.get('/api/persons/:id', (req, res) => {
-  Person.findById(req.params.id).then(person => {
-    res.json(person.toJSON())
-  })
+app.get('/api/persons/:id', (req, res, next) => {
+  Person.findById(req.params.id)
+    .then(person => {
+      if (person) {
+        res.json(person.toJSON())
+      } else {
+        res.status(404).end()
+      }
+    })
+    .catch(error => next(error))
 })
 
 app.get('/api/info', (req, res) => {
@@ -57,13 +66,6 @@ app.get('/api/info', (req, res) => {
     <p>${new Date()}</p>
   `
   res.send(message)
-})
-
-app.delete('/api/persons/:id', (req, res) => {
-  Person.findByIdAndDelete(req.params.id)
-    .then(result => {
-      res.status(204).end()
-    })
 })
 
 app.post('/api/persons', (req, res) => {
@@ -89,6 +91,14 @@ app.post('/api/persons', (req, res) => {
   person.save().then(savedPerson => {
     res.json(savedPerson.toJSON())
   })
+})
+
+app.delete('/api/persons/:id', (req, res, next) => {
+  Person.findByIdAndDelete(req.params.id)
+    .then(result => {
+      res.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 const unknownEndPoint = (req, res) => {
