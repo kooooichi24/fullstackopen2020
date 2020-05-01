@@ -5,7 +5,7 @@ blogRouter.get('/', (req, res) => {
   Blog
     .find({})
     .then(blogs => {
-      res.json(blogs.map(blog => blog.toJSON()))
+      res.json(blogs)
     })
 })
 
@@ -22,7 +22,7 @@ blogRouter.post('/', (req, res) => {
   blog
     .save()
     .then(savedBlog => {
-      res.json(savedBlog.toJSON())
+      res.json(savedBlog)
     })
 })
 
