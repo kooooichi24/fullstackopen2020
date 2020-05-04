@@ -28,6 +28,24 @@ test('is identify property id?', async () => {
   })
 })
 
+test('a valid blog can be added', async () => {
+  const newBlog = {
+    title: '個人開発で100ヵ国以上が参加するトーナメントで世界1位を獲るまで',
+    author: '@svfreerider',
+    url: 'https://qiita.com/svfreerider/items/c18edac0e93ed86c55bf',
+    likes: 306
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
