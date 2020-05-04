@@ -3,7 +3,7 @@ const Blog = require('../models/blog')
 
 blogRouter.get('/', async (req, res) => {
   const blogs = await Blog.find({})
-  res.json(blogs)
+  res.json(blogs.map(blog => blog.toJSON()))
 })
 
 blogRouter.post('/', (req, res) => {
@@ -19,7 +19,7 @@ blogRouter.post('/', (req, res) => {
   blog
     .save()
     .then(savedBlog => {
-      res.json(savedBlog)
+      res.json(savedBlog.toJSON())
     })
 })
 
