@@ -62,6 +62,21 @@ test('blog without likes can be added', async () => {
   expect(savedBlog.body.likes).toBe(0)
 })
 
+test('blog without title or url is not added', async () => {
+  const newBlogWithoutTitleOrUrl = {
+    author: '@svfreerider',
+    likes: 306
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlogWithoutTitleOrUrl)
+    .expect(400)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
