@@ -46,6 +46,22 @@ test('a valid blog can be added', async () => {
   expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
 })
 
+test('blog without likes can be added', async () => {
+  const newBlogWithoutLike = {
+    title: '個人開発で100ヵ国以上が参加するトーナメントで世界1位を獲るまで',
+    author: '@svfreerider',
+    url: 'https://qiita.com/svfreerider/items/c18edac0e93ed86c55bf'
+  }
+
+  const savedBlog = await api
+    .post('/api/blogs')
+    .send(newBlogWithoutLike)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  expect(savedBlog.body.likes).toBe(0)
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
