@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
 
+mongoose.set('useFindAndModify', false)
+
 const userScheme = new mongoose.Schema({
   username: {
     type: String,
