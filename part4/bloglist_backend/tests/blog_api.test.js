@@ -33,16 +33,30 @@ describe('when there is initially some blogs saved', () => {
 })
 
 describe('addition of a new blog', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'root', passwordHash })
+
+    await user.save()
+  })
+
   test('succeeds with a valid data', async () => {
     const newBlog = {
-      title: '個人開発で100ヵ国以上が参加するトーナメントで世界1位を獲るまで',
-      author: '@svfreerider',
-      url: 'https://qiita.com/svfreerider/items/c18edac0e93ed86c55bf',
-      likes: 306
+      title: 'IT系の会社に入った新入社員の皆さんへのアドバイスを、ひとつだけ',
+      author: '@ishida330',
+      url: 'https://qiita.com/ishida330/items/149d93b9690eb61d0e05',
+      likes: 1533
     }
+
+    const loginResult = await api
+      .post('/api/login')
+      .send({ username: 'root', password: 'sekret' })
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${loginResult.body.token}`)
       .send(newBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -53,13 +67,17 @@ describe('addition of a new blog', () => {
 
   test('succeeds without likes of blog', async () => {
     const newBlogWithoutLike = {
-      title: '個人開発で100ヵ国以上が参加するトーナメントで世界1位を獲るまで',
-      author: '@svfreerider',
-      url: 'https://qiita.com/svfreerider/items/c18edac0e93ed86c55bf'
+      title: 'IT系の会社に入った新入社員の皆さんへのアドバイスを、ひとつだけ',
+      author: '@ishida330',
+      url: 'https://qiita.com/ishida330/items/149d93b9690eb61d0e05'
     }
+    const loginResult = await api
+      .post('/api/login')
+      .send({ username: 'root', password: 'sekret' })
 
     const savedBlog = await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${loginResult.body.token}`)
       .send(newBlogWithoutLike)
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -72,9 +90,13 @@ describe('addition of a new blog', () => {
       author: '@svfreerider',
       likes: 306
     }
+    const loginResult = await api
+      .post('/api/login')
+      .send({ username: 'root', password: 'sekret' })
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${loginResult.body.token}`)
       .send(newBlogWithoutTitleOrUrl)
       .expect(400)
 
