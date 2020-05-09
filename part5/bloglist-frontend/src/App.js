@@ -36,7 +36,7 @@ const App = () => {
     }, 5000)
   }
 
-  const handleLogin = async (event) => {
+  const login = async (event) => {
     event.preventDefault()
     try {
       const user = await loginService.login({
@@ -57,7 +57,7 @@ const App = () => {
     }
   }
 
-  const handleCreateForm = async (event) => {
+  const createForm = async (event) => {
     event.preventDefault()
     try {
       const newObject = { title, author, url }
@@ -74,23 +74,23 @@ const App = () => {
     }
   }
 
-  const handleUsernameChange = (event) => {
+  const changeUsername = (event) => {
     setUsername(event.target.value)
   }
 
-  const handlePasswordChange = (event) => {
+  const changePassword = (event) => {
     setPassword(event.target.value)
   }
 
-  const handleTitleChange = (event) => {
+  const changeTitle = (event) => {
     setTitle(event.target.value)
   }
 
-  const handleAuthorChange = (event) => {
+  const changeAuthor = (event) => {
     setAuthor(event.target.value)
   }
   
-  const handleUrlChange = (event) => {
+  const changeUrl = (event) => {
     setUrl(event.target.value)
   }
 
@@ -104,14 +104,14 @@ const App = () => {
     <div>
       <h1>log in to application</h1>
       <Notification notification={notification} />
-      <form onSubmit={handleLogin}>
+      <form onSubmit={login}>
         <div>
           username
-          <input type="text" value={username} name="Username" onChange={handleUsernameChange} />
+          <input type="text" value={username} name="Username" onChange={changeUsername} />
         </div>
         <div>
           password
-          <input type="text" value={password} name="Password" onChange={handlePasswordChange} />
+          <input type="text" value={password} name="Password" onChange={changePassword} />
         </div>
         <button type="submit">login</button>
       </form>
@@ -121,24 +121,23 @@ const App = () => {
   const blogForm = () => (
     <div>
       <h1>create new</h1>
-      <form onSubmit={handleCreateForm}>
+      <form onSubmit={createForm}>
         <div>
           title:
-          <input type="text" value={title} name="Title" onChange={handleTitleChange} />
+          <input type="text" value={title} name="Title" onChange={changeTitle} />
         </div>
         <div>
           author:
-          <input type="text" value={author} name="Author" onChange={handleAuthorChange} />
+          <input type="text" value={author} name="Author" onChange={changeAuthor} />
         </div>
         <div>
           url:
-          <input type="text" value={url} name="Url" onChange={handleUrlChange} />
+          <input type="text" value={url} name="Url" onChange={changeUrl} />
         </div>
         <button type="submit">create</button>
       </form>
     </div>
   )
-
 
   if (user === null) {
     return (
@@ -150,6 +149,7 @@ const App = () => {
     <div>
       <h1>blogs</h1>
       <Notification notification={notification} />
+
       <p>
         {user.username} logged in 
         <button onClick={logout}>logout</button>
