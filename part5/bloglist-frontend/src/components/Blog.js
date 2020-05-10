@@ -1,15 +1,23 @@
 import React, { useState } from 'react'
 
-const Blog = ({ blog, updateBlog }) => {
+const Blog = ({ blog, user, updateBlog, removeBlog }) => {
   const [ visible, setVisible ] = useState(false)
 
   const button_text = visible ? "hide" : "view"
   const viewInfo = { display: visible ? '' : 'none' }
+  const deleteBottonView = () => {
+    if (!blog.user) {
+      return { display: 'none' }
+    } 
+    return { display: blog.user.username !== user.username ? 'none' : '' }
+  }
+  
+
   const toggleVisibility = () => {
     setVisible(!visible)
   }
 
-  const incrementLike = async () => {
+  const incrementLike = () => {
     const newObject = {
       user: blog.user.id,
       title: blog.title,
@@ -19,6 +27,14 @@ const Blog = ({ blog, updateBlog }) => {
     }
 
     updateBlog(blog.id, newObject)
+  }
+
+  const onRemoveBlog = () => {
+    console.log('click remove botton')
+    const ok = window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
+    if (ok) {
+      removeBlog(blog)
+    }
   }
 
   const blogStyle = {
@@ -42,6 +58,10 @@ const Blog = ({ blog, updateBlog }) => {
           <button onClick={incrementLike}>like</button>
         </div>
         <div>{blog.author}</div>
+
+        <button style={deleteBottonView()} onClick={onRemoveBlog}>
+            remove
+        </button>
       </div>
     </div>
   )

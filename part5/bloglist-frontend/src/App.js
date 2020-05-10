@@ -79,6 +79,17 @@ const App = () => {
     setBlogs( sortBlogs(blogs.map(b => b.id !== id ? b : updatedBlog)) )
   }
 
+  const removeBlog = async (blog) => {
+    try {
+      await blogService.remove(blog.id)
+      setBlogs( sortBlogs(blogs.filter(b => b.id !== blog.id)) )
+
+      notifyWith(`succeed delete blog: ${blog.title}`)
+    } catch(exception) {
+      notifyWith(`failed delete blog: ${blog.title}`, 'error')
+    }
+  }
+
   const changeUsername = (event) => {
     setUsername(event.target.value)
   }
@@ -140,7 +151,13 @@ const App = () => {
       {blogForm()}
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
+        <Blog
+          key={blog.id}
+          blog={blog}
+          user={user}
+          updateBlog={updateBlog}
+          removeBlog={removeBlog}
+        />
       )}
     </div>
   )
