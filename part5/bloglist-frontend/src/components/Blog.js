@@ -1,12 +1,24 @@
 import React, { useState } from 'react'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, updateBlog }) => {
   const [ visible, setVisible ] = useState(false)
 
   const button_text = visible ? "hide" : "view"
   const viewInfo = { display: visible ? '' : 'none' }
   const toggleVisibility = () => {
     setVisible(!visible)
+  }
+
+  const incrementLike = async () => {
+    const newObject = {
+      user: blog.user.id,
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      likes: blog.likes + 1
+    }
+
+    updateBlog(blog.id, newObject)
   }
 
   const blogStyle = {
@@ -24,9 +36,12 @@ const Blog = ({ blog }) => {
         <button onClick={toggleVisibility}>{button_text}</button>
       </div>
       <div style={viewInfo}>
-        <div>{blog.author}</div>
-        <div>{blog.likes}</div>
         <div>{blog.url}</div>
+        <div>
+          likes {blog.likes}
+          <button onClick={incrementLike}>like</button>
+        </div>
+        <div>{blog.author}</div>
       </div>
     </div>
   )

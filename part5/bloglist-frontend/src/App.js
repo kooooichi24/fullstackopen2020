@@ -59,7 +59,7 @@ const App = () => {
   const addBlog = async (blogObject) => {
     try {
       blogFormRef.current.toggleVisibility()
-      
+
       const returnedBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(returnedBlog))
       
@@ -68,6 +68,11 @@ const App = () => {
       notifyWith('title or author invalid', 'error')
       console.log(exception)
     }
+  }
+
+  const updateBlog = async (id, blogObject) => {
+    const updatedBlog = await blogService.update(id, blogObject)
+    setBlogs(blogs.map(b => b.id !== id ? b : updatedBlog))
   }
 
   const changeUsername = (event) => {
@@ -131,7 +136,7 @@ const App = () => {
       {blogForm()}
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
       )}
     </div>
   )
