@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -9,9 +11,6 @@ const App = () => {
   const [ username, setUsername ] = useState('')
   const [ password, setPassword ] = useState('')
   const [ user, setUser ] = useState(null)
-  const [ title, setTitle ] = useState('')
-  const [ author, setAuthor ] = useState('')
-  const [ url, setUrl ] = useState('')
   const [ notification, setNotification ] = useState(null)
 
   useEffect(() => {
@@ -57,16 +56,13 @@ const App = () => {
     }
   }
 
-  const createForm = async (event) => {
-    event.preventDefault()
+  const addBlog = async (blogObject) => {
     try {
-      const newObject = { title, author, url }
-
-      const returnedBlog = await blogService.create(newObject)
+      blogFormRef.current.toggleVisibility()
+      
+      const returnedBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(returnedBlog))
-      setTitle('')
-      setAuthor('')
-      setUrl('')
+      
       notifyWith(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
     } catch(exception) {
       notifyWith('title or author invalid', 'error')
@@ -80,18 +76,6 @@ const App = () => {
 
   const changePassword = (event) => {
     setPassword(event.target.value)
-  }
-
-  const changeTitle = (event) => {
-    setTitle(event.target.value)
-  }
-
-  const changeAuthor = (event) => {
-    setAuthor(event.target.value)
-  }
-  
-  const changeUrl = (event) => {
-    setUrl(event.target.value)
   }
 
   const logout = () => {
@@ -118,25 +102,14 @@ const App = () => {
     </div>
   )
 
+  const blogFormRef = React.createRef()
+
   const blogForm = () => (
-    <div>
-      <h1>create new</h1>
-      <form onSubmit={createForm}>
-        <div>
-          title:
-          <input type="text" value={title} name="Title" onChange={changeTitle} />
-        </div>
-        <div>
-          author:
-          <input type="text" value={author} name="Author" onChange={changeAuthor} />
-        </div>
-        <div>
-          url:
-          <input type="text" value={url} name="Url" onChange={changeUrl} />
-        </div>
-        <button type="submit">create</button>
-      </form>
-    </div>
+    <Togglable buttonLabel="create" ref={blogFormRef}>
+      <BlogForm
+        createBlog={addBlog}
+      />
+    </Togglable>
   )
 
   if (user === null) {
