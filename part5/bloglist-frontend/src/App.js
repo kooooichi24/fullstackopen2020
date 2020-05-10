@@ -13,9 +13,13 @@ const App = () => {
   const [ user, setUser ] = useState(null)
   const [ notification, setNotification ] = useState(null)
 
+  const sortBlogs = (blogs) => {
+    return blogs.sort((a,b) => b.likes - a.likes)
+  }
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+      setBlogs( sortBlogs(blogs) )
     )  
   }, [])
 
@@ -61,7 +65,7 @@ const App = () => {
       blogFormRef.current.toggleVisibility()
 
       const returnedBlog = await blogService.create(blogObject)
-      setBlogs(blogs.concat(returnedBlog))
+      setBlogs( sortBlogs(blogs.concat(returnedBlog)) )
       
       notifyWith(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
     } catch(exception) {
@@ -72,7 +76,7 @@ const App = () => {
 
   const updateBlog = async (id, blogObject) => {
     const updatedBlog = await blogService.update(id, blogObject)
-    setBlogs(blogs.map(b => b.id !== id ? b : updatedBlog))
+    setBlogs( sortBlogs(blogs.map(b => b.id !== id ? b : updatedBlog)) )
   }
 
   const changeUsername = (event) => {
