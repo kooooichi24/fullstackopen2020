@@ -1,13 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const LoginForm = ({
-    handleUsernameChange,
-    handlePasswordChange,
-    handleLogin,
-    username,
-    password
-  }) => {
+const LoginForm = ({ handleUsernameChange, handlePasswordChange, handleLogin, username, password }) => {
   return (
     <form onSubmit={handleLogin}>
       <div>

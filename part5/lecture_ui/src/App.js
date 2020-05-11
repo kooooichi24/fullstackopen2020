@@ -73,7 +73,7 @@ const App = () => {
       .then(returnedNote => {
         setNotes(notes.map(note => note.id !== id ? note : returnedNote))
       })
-      .catch(error => {
+      .catch(() => {
         setErrorMessage(
           `Note ${note.content} was already deleted from server`
         )
@@ -82,10 +82,10 @@ const App = () => {
         }, 5000)
         setNotes(notes.filter(note => note.id !== id))
       })
-  } 
+  }
 
-  const notesToShow = showAll 
-    ? notes 
+  const notesToShow = showAll
+    ? notes
     : notes.filter(note => note.important === true)
 
   const handleLogin = async (event) => {
@@ -135,7 +135,7 @@ const App = () => {
       <h1>Notes</h1>
       <Notification message={errorMessage} />
 
-      {user === null ? 
+      {user === null ?
         loginForm() :
         <div>
           <p>{user.name} logged in</p>
@@ -149,9 +149,9 @@ const App = () => {
         </button>
       </div>
       <ul>
-        {notesToShow.map(note => 
-          <Note 
-            key={note.id} 
+        {notesToShow.map(note =>
+          <Note
+            key={note.id}
             note={note}
             toggleImportance={() => toggleImportanceOf(note.id)}
           />
