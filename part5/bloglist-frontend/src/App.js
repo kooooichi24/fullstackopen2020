@@ -20,7 +20,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( sortBlogs(blogs) )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const App = () => {
   }, [])
 
   const notifyWith = (message, type='success') => {
-    setNotification({message, type})
+    setNotification({ message, type })
     setTimeout(() => {
       setNotification(null)
     }, 5000)
@@ -66,7 +66,7 @@ const App = () => {
 
       const returnedBlog = await blogService.create(blogObject)
       setBlogs( sortBlogs(blogs.concat(returnedBlog)) )
-      
+
       notifyWith(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
     } catch(exception) {
       notifyWith('title or author invalid', 'error')
@@ -144,10 +144,10 @@ const App = () => {
       <Notification notification={notification} />
 
       <p>
-        {user.username} logged in 
+        {user.username} logged in
         <button onClick={logout}>logout</button>
       </p>
-      
+
       {blogForm()}
 
       {blogs.map(blog =>

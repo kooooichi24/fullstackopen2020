@@ -3,15 +3,15 @@ import React, { useState } from 'react'
 const Blog = ({ blog, user, updateBlog, removeBlog }) => {
   const [ visible, setVisible ] = useState(false)
 
-  const button_text = visible ? "hide" : "view"
+  const button_text = visible ? 'hide' : 'view'
   const viewInfo = { display: visible ? '' : 'none' }
   const deleteBottonView = () => {
     if (!blog.user) {
       return { display: 'none' }
-    } 
+    }
     return { display: blog.user.username !== user.username ? 'none' : '' }
   }
-  
+
 
   const toggleVisibility = () => {
     setVisible(!visible)
@@ -44,7 +44,7 @@ const Blog = ({ blog, user, updateBlog, removeBlog }) => {
     borderWidth: 1,
     marginBottom: 5
   }
-  
+
   return (
     <div style={blogStyle}>
       <div>
