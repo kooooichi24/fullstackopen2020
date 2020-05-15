@@ -51,7 +51,7 @@ const Blog = ({ blog, user, updateBlog, removeBlog }) => {
         {blog.title}
         <button onClick={toggleVisibility}>{button_text}</button>
       </div>
-      <div style={viewInfo}>
+      <div style={viewInfo} className='viewInfo'>
         <div>{blog.url}</div>
         <div>
           likes {blog.likes}

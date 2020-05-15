@@ -5,9 +5,9 @@ import Blog from './Blog'
 
 test('blog default visibility', () => {
   const blog = {
-    title: 'aa',
-    author: 'aaa',
-    url: 'aaaa',
+    title: 'title',
+    author: 'author',
+    url: 'url',
     likes: 5
   }
 
@@ -15,5 +15,6 @@ test('blog default visibility', () => {
     <Blog blog={blog} />
   )
 
-  expect(component.container).toHaveTextContent('likes')
+  const div = component.container.querySelector('.viewInfo')
+  expect(div).toHaveStyle('display: none')
 })
