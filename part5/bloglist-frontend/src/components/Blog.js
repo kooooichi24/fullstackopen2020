@@ -55,7 +55,7 @@ const Blog = ({ blog, user, updateBlog, removeBlog }) => {
         <div>{blog.url}</div>
         <div>
           likes {blog.likes}
-          <button onClick={incrementLike}>like</button>
+          <button onClick={incrementLike} className='likeButton'>like</button>
         </div>
         <div>{blog.author}</div>
 
