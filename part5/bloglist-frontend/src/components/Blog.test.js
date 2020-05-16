@@ -1,20 +1,34 @@
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
-import { render } from '@testing-library/react'
+import { render, fireEvent } from '@testing-library/react'
 import Blog from './Blog'
 
-test('blog default visibility', () => {
-  const blog = {
-    title: 'title',
-    author: 'author',
-    url: 'url',
-    likes: 5
-  }
+describe('Blog test', () => {
+  let component
 
-  const component = render(
-    <Blog blog={blog} />
-  )
+  beforeEach(() => {
+    const blog = {
+      title: 'title',
+      author: 'author',
+      url: 'url',
+      likes: 5
+    }
 
-  const div = component.container.querySelector('.viewInfo')
-  expect(div).toHaveStyle('display: none')
+    component = render(
+      <Blog blog={blog} />
+    )
+  })
+
+  test('blog default visibility', () => {
+    const div = component.container.querySelector('.viewInfo')
+    expect(div).toHaveStyle('display: none')
+  })
+  
+  test('clicking the button calls event handler once', () => {
+    const button = component.container.querySelector('button')
+    fireEvent.click(button)
+    
+    const div = component.container.querySelector('.viewInfo')
+    expect(div).toHaveStyle('display: block;')
+  })
 })
