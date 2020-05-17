@@ -37,7 +37,7 @@ describe('Blog app', function() {
     })
   })
 
-  describe('When logged in', function() {
+  describe.only('When logged in', function() {
     beforeEach(function() {
       cy.login({ username: 'root', password: 'sekret' })
     })
@@ -50,6 +50,23 @@ describe('Blog app', function() {
         url: 'url1'
       })
       cy.contains('title1')
+    })
+
+    describe('When made like', function() {
+      beforeEach(function() {
+        cy.createBlog({ title: 'title1', author: 'author1', url: 'url1' })
+        cy.createBlog({ title: 'title2', author: 'author2', url: 'url2' })
+        cy.createBlog({ title: 'title3', author: 'author3', url: 'url3' })
+      })
+
+      it('increment number of like', function() {
+        cy.contains('title2')
+          .contains('view')
+          .click()
+
+        cy.contains('author2').parent().contains('likes').find('button').click()
+        cy.contains('author2').parent().contains('likes 1')
+      })
     })
   })
 })
