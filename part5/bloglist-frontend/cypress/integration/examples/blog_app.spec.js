@@ -36,4 +36,20 @@ describe('Blog app', function() {
       cy.get('html').should('not.contain', 'root logged in')
     })
   })
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.login({ username: 'root', password: 'sekret' })
+    })
+
+    it('A blog can be created', function() {
+      cy.contains('create').click()
+      cy.createBlog({
+        title: 'title1',
+        author: 'author1',
+        url: 'url1'
+      })
+      cy.contains('title1')
+    })
+  })
 })
