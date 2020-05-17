@@ -10,7 +10,7 @@ describe('Note app', function() {
     cy.visit('http://localhost:3000')
   })
 
-  it.only('login fails with wrong password', function() {
+  it('login fails with wrong password', function() {
     cy.contains('login').click()
     cy.get('#username').type('root')
     cy.get('#password').type('wrong')
@@ -40,10 +40,7 @@ describe('Note app', function() {
 
   describe('when logged in', function() {
     beforeEach(function() {
-      cy.contains('login').click()
-      cy.get('#username').type('root')
-      cy.get('#password').type('sekret')
-      cy.get('#login-button').click()
+      cy.login({ username: 'root', password: 'sekret' })
     })
 
     it('a new note can be created', function() {
@@ -55,9 +52,10 @@ describe('Note app', function() {
 
     describe('and a note exists', function() {
       beforeEach(function() {
-        cy.contains('new note').click()
-        cy.get('input').type('another note cypress')
-        cy.contains('save').click()
+        cy.createNote({
+          content: 'another note cypress',
+          important: false
+        })
       })
 
       it('it can be made important', function() {
