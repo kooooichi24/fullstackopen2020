@@ -111,13 +111,13 @@ const App = () => {
       <form onSubmit={login}>
         <div>
           username
-          <input type="text" value={username} name="Username" onChange={changeUsername} />
+          <input id='username' type="text" value={username} name="Username" onChange={changeUsername} />
         </div>
         <div>
           password
-          <input type="text" value={password} name="Password" onChange={changePassword} />
+          <input id='password' type="text" value={password} name="Password" onChange={changePassword} />
         </div>
-        <button type="submit">login</button>
+        <button id='login-button' type="submit">login</button>
       </form>
     </div>
   )
