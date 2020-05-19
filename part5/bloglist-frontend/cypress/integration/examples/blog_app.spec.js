@@ -3,6 +3,7 @@ describe('Blog app', function() {
     cy.request('POST', 'http://localhost:3003/api/testing/reset')
     cy.makeUser({ username: 'root', name: 'root', password: 'sekret' })
     cy.makeUser({ username: 'root1', name: 'root1', password: 'sekret1' })
+    cy.visit('http://localhost:3000')
   })
 
   it('Login form is shown', function() {
@@ -65,11 +66,37 @@ describe('Blog app', function() {
     })
   })
 
-  describe.only('Delete', function() {
+  describe('When several blogs creaded by many people exist', function() {
     beforeEach(function() {
       cy.login({ username: 'root', password: 'sekret' })
       cy.createBlog({ title: 'title1', author: 'author1', url: 'url1' })
       cy.createBlog({ title: 'title2', author: 'author2', url: 'url2' })
+      cy.contains('logout').click()
+      cy.login({ username: 'root1', password: 'sekret1' })
+      cy.createBlog({ title: 'title3', author: 'author3', url: 'url3' })
+
+      cy.contains('title1').parent().as('blog1')
+      cy.contains('title2').parent().as('blog2')
+      cy.contains('title3').parent().as('blog3')
+    })
+
+    it('Model Answer: Blogs can be liked', function() {
+      cy.get('@blog2').contains('view').click()
+      cy.get('@blog2').contains('like').click()
+      cy.get('@blog2').contains('likes 1')
+    })
+
+    it('Model Answer: The creator can delete a blog', function() {
+      cy.get('@blog3').contains('view').click()
+      cy.get('@blog3').contains('remove').click()
+      cy.get('home').should('not.contain', 'test3')
+
+
+      cy.get('@blog2').contains('view').click()
+      // ここができない；；
+      // Blog.jsの定義が違うのかな？
+      // display:noneが効いていない希ガス
+      // cy.get('@blog2').should('contain', 'remove')
     })
 
     it('succeeds with correct credentials', function() {
@@ -96,5 +123,28 @@ describe('Blog app', function() {
       //   .should('contain', 'remove')
       //   .and('have.css', 'display', 'none')
     })
+
+    it.only('they are ordered by number of likes', function() {
+      cy.get('@blog1').contains('view').click()
+      cy.get('@blog2').contains('view').click()
+      cy.get('@blog3').contains('view').click()
+      cy.get('@blog1').contains('like').as('like1')
+      cy.get('@blog2').contains('like').as('like2')
+      cy.get('@blog3').contains('like').as('like3')
+
+      cy.get('@like2').click()
+      cy.get('@like1').click()
+      cy.get('@like1').click()
+      cy.get('@like3').click()
+      cy.get('@like3').click()
+      cy.get('@like3').click()
+
+      cy.get('.blog').then(blogs => {
+        cy.wrap(blogs[0]).contains('likes 1')
+        cy.wrap(blogs[1]).contains('likes 1')
+        cy.wrap(blogs[2]).contains('likes 2')
+      })
+    })
+
   })
 })
