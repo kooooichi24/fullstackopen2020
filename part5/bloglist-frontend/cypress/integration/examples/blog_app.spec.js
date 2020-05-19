@@ -1,13 +1,8 @@
 describe('Blog app', function() {
   beforeEach(function() {
     cy.request('POST', 'http://localhost:3003/api/testing/reset')
-    const user = {
-      name: 'root',
-      username: 'root',
-      password: 'sekret'
-    }
-    cy.request('POST', 'http://localhost:3003/api/users/', user)
-    cy.visit('http://localhost:3000')
+    cy.makeUser({ username: 'root', name: 'root', password: 'sekret' })
+    cy.makeUser({ username: 'root1', name: 'root1', password: 'sekret1' })
   })
 
   it('Login form is shown', function() {
@@ -37,7 +32,7 @@ describe('Blog app', function() {
     })
   })
 
-  describe.only('When logged in', function() {
+  describe('When logged in', function() {
     beforeEach(function() {
       cy.login({ username: 'root', password: 'sekret' })
     })
@@ -67,6 +62,39 @@ describe('Blog app', function() {
         cy.contains('author2').parent().contains('likes').find('button').click()
         cy.contains('author2').parent().contains('likes 1')
       })
+    })
+  })
+
+  describe.only('Delete', function() {
+    beforeEach(function() {
+      cy.login({ username: 'root', password: 'sekret' })
+      cy.createBlog({ title: 'title1', author: 'author1', url: 'url1' })
+      cy.createBlog({ title: 'title2', author: 'author2', url: 'url2' })
+    })
+
+    it('succeeds with correct credentials', function() {
+      cy.contains('title2')
+        .contains('view')
+        .click()
+          
+      cy.contains('author2').parent().contains('remove').click(() => {
+        cy.on('window:confirm', () => true)
+      })
+    })
+
+    it('fails with wrong credentials', function() {
+      cy.contains('logout').click()
+      cy.login({ username: 'root1', password: 'sekret1' })
+
+      cy.contains('title2')
+        .contains('view')
+        .click()
+      
+      // I can't....
+      // Optional bonus exercise: also check that other users cannot delete the blog.
+      // cy.contains('author2').parent()
+      //   .should('contain', 'remove')
+      //   .and('have.css', 'display', 'none')
     })
   })
 })
