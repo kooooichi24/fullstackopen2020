@@ -7,7 +7,7 @@ const noteReducer = (state=[], action) => {
   switch (action.type) {
     // case action type
     case 'NEW_NOTE':
-      state.push(action.data)
+      state.concat(action.data)
       return state
     default:
       return state
