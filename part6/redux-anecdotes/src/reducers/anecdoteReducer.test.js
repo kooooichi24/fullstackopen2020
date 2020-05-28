@@ -31,4 +31,22 @@ describe('anecdoteReducer', () => {
       votes: 1
     },)
   })
+
+  test('returns new state with action NEW_ANECDOTE', () => {
+    const state = []
+    const action = {
+      type: 'NEW_ANECDOTE',
+      data: {
+        id: 1,
+        content: 'If it hurts, do it more often',
+        votes: 0
+      }
+    }
+
+    deepFreeze(state)
+    const newState = anecdoteReducer(state, action)
+
+    expect(newState).toHaveLength(1)
+    expect(newState).toContainEqual(action.data)
+  })
 })
