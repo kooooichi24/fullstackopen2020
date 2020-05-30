@@ -39,12 +39,8 @@ export const initializeAnecdotes = () => {
   }
 }
 
-export const incrementVotes = (anecdote) => {
+export const incrementVotes = (updateObj) => {
   return async dispatch => {
-    const updateObj = {
-      ...anecdote,
-      votes: anecdote.votes + 1
-    }
     await anecdoteService.update(updateObj)
 
     dispatch({
