@@ -29,7 +29,7 @@ describe('anecdoteReducer', () => {
       id: 1,
       content: 'If it hurts, do it more often',
       votes: 1
-    },)
+    })
   })
 
   test('returns new state with action NEW_ANECDOTE', () => {
