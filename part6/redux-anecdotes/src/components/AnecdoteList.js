@@ -5,7 +5,11 @@ import { setNotification } from '../reducers/notificationReducer'
 
 const AnecdoteList = (props) => {
   const anecdotes = props.anecdotes.filter(anecdote => {
-    return anecdote.content.indexOf(props.filter) > -1
+    const filter = props.filter.toLowerCase()
+    return anecdote.content.toLowerCase().indexOf(filter) > -1
+
+    // Alternative way to filtering
+    // return anecdote.content.toLowerCase().includes(filter)
   })
 
   const vote = (anecdote) => {
