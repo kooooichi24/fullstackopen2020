@@ -1,4 +1,5 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import { useSelector, useDispatch } from 'react-redux'
 import { incrementVotes } from '../reducers/anecdoteReducer'
 import { setNotification } from '../reducers/notificationReducer'
