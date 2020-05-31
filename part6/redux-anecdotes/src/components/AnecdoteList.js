@@ -14,7 +14,7 @@ const AnecdoteList = (props) => {
 
   const vote = (anecdote) => {
     props.incrementVotes(anecdote)
-    props.setNotification(`you voted '${anecdote.content}'`, 5000)
+    props.setNotification(`you voted '${anecdote.content}'`, 5)
   }
 
   const sortAnecdotes = anecdotes.sort((a,b) => b.votes - a.votes)
