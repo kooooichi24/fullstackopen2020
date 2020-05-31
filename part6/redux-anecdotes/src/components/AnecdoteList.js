@@ -9,12 +9,7 @@ const AnecdoteList = (props) => {
   })
 
   const vote = (anecdote) => {
-    const updateObj = {
-      ...anecdote,
-      votes: anecdote.votes + 1
-    }
-
-    props.incrementVotes(updateObj)
+    props.incrementVotes(anecdote)
     props.setNotification(`you voted '${anecdote.content}'`, 5000)
   }
 
