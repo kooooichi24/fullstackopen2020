@@ -3,7 +3,9 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  Link,
+  useRouteMatch,
+  useHistory
 } from 'react-router-dom'
 
 const Menu = () => {
@@ -19,11 +21,27 @@ const Menu = () => {
   )
 }
 
+const Anecdote = ({ anecdote }) => {
+  return (
+    <div>
+      <h2>{anecdote.content}</h2>
+      <p>has {anecdote.votes} votes</p>
+      <p>for more info see <a href={anecdote.info}> {anecdote.info}</a>
+      </p>
+    </div>
+  )
+}
+
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >{anecdote.content}</li>)}
+      {anecdotes.map(anecdote => 
+        <li key={anecdote.id} >
+          <Link to={`/anecdotes/${anecdote.id}`}>
+            {anecdote.content}
+          </Link>
+        </li>)}
     </ul>
   </div>
 )
@@ -51,6 +69,8 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
+  const history = useHistory()
+
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
@@ -64,6 +84,7 @@ const CreateNew = (props) => {
       info,
       votes: 0
     })
+    history.push('/')
   }
 
   return (
@@ -89,6 +110,20 @@ const CreateNew = (props) => {
 
 }
 
+const Notification = ({ notification }) => {
+  const style = {
+    border: 'solid',
+    padding: 10,
+    borderWidth: 1
+  }
+  
+  return (
+    <div style={style}>
+      { notification }
+    </div>
+  )
+}
+
 const App = () => {
   const [anecdotes, setAnecdotes] = useState([
     {
@@ -112,6 +147,11 @@ const App = () => {
   const addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0)
     setAnecdotes(anecdotes.concat(anecdote))
+
+    setNotification(`a new anecdote ${anecdote.content} created!!`)
+    setTimeout(() => {
+      setNotification(null)
+    }, 5000)
   }
 
   const anecdoteById = (id) =>
@@ -128,27 +168,33 @@ const App = () => {
     setAnecdotes(anecdotes.map(a => a.id === id ? voted : a))
   }
 
+  const match = useRouteMatch('/anecdotes/:id')
+  const anecdote = match
+    ? anecdotes.find(a => a.id === match.params.id)
+    : null
+
   return (
     <div>
-      <Router>
-        <h1>Software anecdotes</h1>
-        <Menu />
-        
-        <Switch>
-          <Route exact path="/">
-            <AnecdoteList anecdotes={anecdotes} />
-          </Route>
-          <Route exact path="/about">
-            <About />
-          </Route>
-          <Route exact path="/create">
-            <CreateNew addNew={addNew} />
-          </Route>
-        </Switch>
-
-        <Footer />
-      </Router>
+      <h1>Software anecdotes</h1>
+      <Menu />
+      {notification ? <Notification notification={notification}/> : null}
       
+      <Switch>
+        <Route exact path="/">
+          <AnecdoteList anecdotes={anecdotes} />
+        </Route>
+        <Route exact path="/anecdotes/:id">
+          <Anecdote anecdote={anecdote} />
+        </Route>
+        <Route exact path="/about">
+          <About />
+        </Route>
+        <Route exact path="/create">
+          <CreateNew addNew={addNew} />
+        </Route>
+      </Switch>
+
+      <Footer />
     </div>
   )
 }
