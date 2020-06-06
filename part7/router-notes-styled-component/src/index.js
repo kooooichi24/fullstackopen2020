@@ -10,20 +10,6 @@ import {
   useRouteMatch,
   useHistory,
 } from "react-router-dom"
-import {
-  Container,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  Paper,
-  TextField,
-  Button,
-  AppBar,
-  Toolbar
-} from '@material-ui/core'
-import { Alert } from '@material-ui/lab'
 
 const Home = () => (
   <div> 
@@ -45,23 +31,13 @@ const Note = ({ note }) => {
 const Notes = ({notes}) => (
   <div>
     <h2>Notes</h2>
-
-    <TableContainer component={Paper}>
-      <Table>
-        <TableBody>
-          {notes.map(note => (
-            <TableRow key={note.id}>
-              <TableCell>
-                <Link to={`/notes/${note.id}`}>{note.content}</Link>
-              </TableCell>
-              <TableCell>
-                {note.user}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <ul>
+      {notes.map(note =>
+        <li key={note.id}>
+          <Link to={`/notes/${note.id}`}>{note.content}</Link>
+        </li>
+      )}
+    </ul>
   </div>
 )
 
@@ -90,16 +66,12 @@ const Login = (props) => {
       <h2>login</h2>
       <form onSubmit={onSubmit}>
         <div>
-          <TextField label='username' />
+          username: <input />
         </div>
         <div>
-          <TextField label='password' type='password' />
+          password: <input type='password' />
         </div>
-        <div>
-          <Button variant='contained' color='primary' type='submit'>
-            login
-          </Button>
-        </div>
+        <button type="submit">login</button>
       </form>
     </div>
   )
@@ -127,15 +99,10 @@ const App = () => {
     }
   ])
 
-  const [user, setUser] = useState(null)
-  const [message, setMessage] = useState(null)
+  const [user, setUser] = useState(null) 
 
   const login = (user) => {
     setUser(user)
-    setMessage(`welcome ${user}`)
-    setTimeout(() => {
-      setMessage(null)
-    }, 10000)
   }
 
   const padding = {
@@ -148,23 +115,15 @@ const App = () => {
     : null
 
   return (
-    <Container>
-      <AppBar position="static">
-        <Toolbar>
-          <Button color='inherit' component={Link} to='/'>home</Button>
-          <Button color='inherit' component={Link} to='/notes'>notes</Button>
-          <Button color='inherit' component={Link} to='/users'>users</Button>
-          {user
-            ? <em>{user} logged in</em>
-            : <Button color='inherit' component={Link} to='/login'>login</Button>
-          }
-        </Toolbar>
-      </AppBar>
-      
+    <div>
       <div>
-        {(message && 
-          <Alert severity="success">{ message }</Alert>
-        )}
+        <Link style={padding} to="/">home</Link>
+        <Link style={padding} to="/notes">notes</Link>
+        <Link style={padding} to="/users">users</Link>
+        {user
+          ? <em>{user} logged in</em>
+          : <Link style={padding} to="/login">login</Link>
+        }
       </div>
 
       <Switch>
@@ -188,7 +147,7 @@ const App = () => {
         <br />
         <em>Note app, Department of Computer Science 2020</em>
       </div>
-    </Container>
+    </div>
   )
 }
 
