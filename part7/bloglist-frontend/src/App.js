@@ -6,11 +6,13 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
+import Users from './components/Users'
 import storage from './utils/storage'
 
 import { initializeBlogs, createBlog } from './reducers/blogReducer'
 import { login, logout } from './reducers/userReducer'
 import { setNotification } from './reducers/notificationReducer'
+import { initializeUsers } from './reducers/usersReducer'
 
 const App = () => {
   const user = useSelector(state => state.user)
@@ -20,6 +22,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initializeBlogs())
+    dispatch(initializeUsers())
     
     const user = storage.loadUser()
     if (user) {
@@ -72,10 +75,9 @@ const App = () => {
       <h1>blogs</h1>
       <Notification notification={notification} />
 
-      <p>
-        {user.username} logged in
-        <button onClick={handleLogout}>logout</button>
-      </p>
+      <span>
+        {user.username} logged in <button onClick={handleLogout}>logout</button>
+      </span>
 
       {blogForm()}
 
@@ -86,6 +88,9 @@ const App = () => {
           user={user}
         />
       )}
+
+
+      <Users />
     </div>
   )
 }
