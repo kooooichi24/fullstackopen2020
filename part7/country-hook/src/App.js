@@ -19,13 +19,18 @@ const useCountry = (name) => {
   const [country, setCountry] = useState(null)
 
   useEffect(() => {
-    console.log(getCountry(name))
-
-    setCountry(getCountry(name))
-    // getCountry(name)
-    //   .then(country => {
-    //     setCountry(country)
-    //   })
+    if (name) {
+      const url = `https://restcountries.eu/rest/v2/name/${name}?fullText=true`
+      axios.get(url).then(res => {
+        console.log(res.data)
+        if (res.data.length > 0) {
+          setCountry({
+            found: true,
+            data: res.data[0]
+          })
+        }
+      }).catch(error => setCountry({ found: false }))
+    }
   }, [name])
 
   console.log(country)
@@ -54,17 +59,6 @@ const Country = ({ country }) => {
       <img src={country.data.flag} height='100' alt={`flag of ${country.data.name}`}/>  
     </div>
   )
-}
-
-const getCountry = (name) => {
-  if (name === '') return
-
-  const baseUrl = `https://restcountries.eu/rest/v2/name/${name}?fullText=true`
-  const req =　axios.get(baseUrl)
-  return req.then(res => {
-    console.log(req, res, res.data)
-    return {...res, found: true}
-  })
 }
 
 const App = () => {
