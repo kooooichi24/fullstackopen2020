@@ -3,13 +3,15 @@ import blogService from '../services/blogs'
 // reducer
 const blogReducer = (state=[], action) => {
     switch (action.type) {
-        case 'INIT_BLOG':
+        case 'INIT':
             return action.data
-        case 'NEW_BLOG':
+        case 'CREATE':
             return [...state, action.data]
-        case 'LIKE_BLOG':
-            console.log('reducer case like-blog')
-            return state.map(s => s.id !== action.data.id ? state : action.data)
+        case 'LIKE':
+            const liked = action.data
+            return state.map(b => b.id===liked.id ? liked : b)
+        case 'DELETE':
+            return state.filter(b => b.id !== action.id)
         default:
             return state
     }
@@ -18,33 +20,45 @@ const blogReducer = (state=[], action) => {
 // action creator
 export const initializeBlogs = () => {
     return async dispatch => {
-        const blogs = await blogService.getAll()
+        const data = await blogService.getAll()
 
         dispatch({
-            type: 'INIT_BLOG',
-            data: blogs
+            type: 'INIT',
+            data
         })
     }
 }
 
-export const createBlog = (blogObject) => {
+export const createBlog = (blog) => {
     return async dispatch => {
-        const returnedBlog = await blogService.create(blogObject)
+        const data = await blogService.create(blog)
         
         dispatch({
-            type: 'NEW_BLOG',
-            data: returnedBlog
+            type: 'CREATE',
+            data
         })
     }
 }
 
-export const likeBlog = (id, likedBlog) => {
+export const likeBlog = (blog) => {
     return async dispatch => {
-        const returnedBlog = await blogService.update(id, likedBlog)
+        const toLike = { ...blog, likes: blog.likes + 1 }
+        const data = await blogService.update(toLike)
 
         dispatch({
-            type: 'LIKE_BLOG',
-            data: returnedBlog
+            type: 'LIKE',
+            data
+        })
+    }
+}
+
+export const removeBlog = (id) => {
+    return async dispatch => {
+        blogService.remove(id)
+
+        dispatch({
+            type: 'DELETE',
+            id
         })
     }
 }

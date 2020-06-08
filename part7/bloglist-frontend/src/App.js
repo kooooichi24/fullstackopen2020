@@ -17,7 +17,6 @@ const App = () => {
   const [ username, setUsername ] = useState('')
   const [ password, setPassword ] = useState('')
   const [ user, setUser ] = useState(null)
-  // const [ notification, setNotification ] = useState(null)
 
   useEffect(() => {
     dispatch(initializeBlogs())
@@ -31,17 +30,7 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
-
-  const notifyWith = (message, type='success') => {
-    setNotification(message, type)
-    console.log(notification)
-
-    // setNotification({ message, type })
-    // setTimeout(() => {
-    //   setNotification(null)
-    // }, 5000)
-  }
-
+  
   const login = async (event) => {
     event.preventDefault()
     try {
@@ -56,9 +45,9 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-      notifyWith('succeed login')
+      dispatch(setNotification('succeed login'))
     } catch(exception) {
-      notifyWith('wrong username or password', 'error')
+      dispatch(setNotification('wrong username or password', 'error'))
       console.log(exception)
     }
   }
@@ -67,27 +56,11 @@ const App = () => {
     try {
       blogFormRef.current.toggleVisibility()
 
-      createBlog(blogObject)
-      notifyWith(`a new blog ${blogObject.title} by ${blogObject.author} added`)
+      dispatch(createBlog(blogObject))
+      dispatch(setNotification(`a new blog ${blogObject.title} by ${blogObject.author} added`))
     } catch(exception) {
-      notifyWith('title or author invalid', 'error')
+      dispatch(setNotification('title or author invalid', 'error'))
       console.log(exception)
-    }
-  }
-
-  const updateBlog = async (id, blogObject) => {
-    const updatedBlog = await blogService.update(id, blogObject)
-    // setBlogs( sortBlogs(blogs.map(b => b.id !== id ? b : updatedBlog)) )
-  }
-
-  const removeBlog = async (blog) => {
-    try {
-      await blogService.remove(blog.id)
-      // setBlogs( sortBlogs(blogs.filter(b => b.id !== blog.id)) )
-
-      notifyWith(`succeed delete blog: ${blog.title}`)
-    } catch(exception) {
-      notifyWith(`failed delete blog: ${blog.title}`, 'error')
     }
   }
 
@@ -158,8 +131,6 @@ const App = () => {
           key={blog.id}
           blog={blog}
           user={user}
-          updateBlog={updateBlog}
-          removeBlog={removeBlog}
         />
       )}
     </div>

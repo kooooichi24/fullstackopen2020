@@ -1,6 +1,15 @@
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
 
-const Blog = ({ blog, user, updateBlog, removeBlog }) => {
+import { likeBlog, removeBlog } from '../reducers/blogReducer'
+import { setNotification } from '../reducers/notificationReducer'
+// import { useParams, useHistory } from 'react-router-dom'
+
+const Blog = ({ blog, user }) => {
+  const dispatch = useDispatch()
+  // const id = useParams().id
+  // console.log(id)
+
   const [ visible, setVisible ] = useState(false)
 
   const button_text = visible ? 'hide' : 'view'
@@ -12,28 +21,20 @@ const Blog = ({ blog, user, updateBlog, removeBlog }) => {
     return { display: blog.user.username !== user.username ? 'none' : '' }
   }
 
-
   const toggleVisibility = () => {
     setVisible(!visible)
   }
 
   const incrementLike = () => {
-    const newObject = {
-      user: blog.user.id,
-      title: blog.title,
-      author: blog.author,
-      url: blog.url,
-      likes: blog.likes + 1
-    }
-
-    updateBlog(blog.id, newObject)
+    dispatch(likeBlog(blog))
   }
 
   const onRemoveBlog = () => {
     console.log('click remove botton')
     const ok = window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
     if (ok) {
-      removeBlog(blog)
+      dispatch(removeBlog(blog.id))
+      dispatch(setNotification(`succeed delete blog: ${blog.title}`))
     }
   }
 
