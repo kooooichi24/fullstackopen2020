@@ -96,9 +96,9 @@ const CreateNew = (props) => {
     <div>
       <h2>create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
-        <div>content <input type={content.type} value={content.value} onChange={content.onChange}/></div>
-        <div>author <input type={author.type} value={author.value} onChange={author.onChange}/></div>
-        <div>url for more info <input type={info.type} value={info.value} onChange={info.onChange}/></div>
+        <div>content <input {...content.form} /></div>
+        <div>author <input {...author.form} /></div>
+        <div>url for more info <input {...info.form} /></div>
         
         <button type='submit'>create</button>
         <button type='reset' onClick={handleReset}>reset</button>
@@ -197,4 +197,8 @@ const App = () => {
   )
 }
 
-export default App;
+export default () => (
+  <Router>
+    <App />
+  </Router>
+)
