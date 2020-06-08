@@ -5,23 +5,28 @@ import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { useDispatch, useSelector } from 'react-redux'
+import { initializeBlogs } from './reducers/blogReducer'
 
 const App = () => {
-  const [ blogs, setBlogs ] = useState([])
+  const dispatch = useDispatch()
+  const blogs = useSelector(state => state.blogs)
+
+  // const [ blogs, setBlogs ] = useState([])
   const [ username, setUsername ] = useState('')
   const [ password, setPassword ] = useState('')
   const [ user, setUser ] = useState(null)
   const [ notification, setNotification ] = useState(null)
 
-  const sortBlogs = (blogs) => {
-    return blogs.sort((a,b) => b.likes - a.likes)
-  }
-
+  // useEffect(() => {
+  //   blogService.getAll().then(blogs =>
+  //     setBlogs( sortBlogs(blogs) )
+  //   )
+  // }, [])
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( sortBlogs(blogs) )
-    )
-  }, [])
+    dispatch(initializeBlogs())
+  }, [dispatch])
+
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -65,7 +70,7 @@ const App = () => {
       blogFormRef.current.toggleVisibility()
 
       const returnedBlog = await blogService.create(blogObject)
-      setBlogs( sortBlogs(blogs.concat(returnedBlog)) )
+      // setBlogs( sortBlogs(blogs.concat(returnedBlog)) )
 
       notifyWith(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
     } catch(exception) {
@@ -76,13 +81,13 @@ const App = () => {
 
   const updateBlog = async (id, blogObject) => {
     const updatedBlog = await blogService.update(id, blogObject)
-    setBlogs( sortBlogs(blogs.map(b => b.id !== id ? b : updatedBlog)) )
+    // setBlogs( sortBlogs(blogs.map(b => b.id !== id ? b : updatedBlog)) )
   }
 
   const removeBlog = async (blog) => {
     try {
       await blogService.remove(blog.id)
-      setBlogs( sortBlogs(blogs.filter(b => b.id !== blog.id)) )
+      // setBlogs( sortBlogs(blogs.filter(b => b.id !== blog.id)) )
 
       notifyWith(`succeed delete blog: ${blog.title}`)
     } catch(exception) {
@@ -138,6 +143,8 @@ const App = () => {
     )
   }
 
+  const byLikes = (b1, b2) => b2.likes - b1.likes
+  
   return (
     <div>
       <h1>blogs</h1>
@@ -150,7 +157,7 @@ const App = () => {
 
       {blogForm()}
 
-      {blogs.map(blog =>
+      {blogs.sort(byLikes).map(blog =>
         <Blog
           key={blog.id}
           blog={blog}
