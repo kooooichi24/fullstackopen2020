@@ -6,27 +6,22 @@ import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { useDispatch, useSelector } from 'react-redux'
-import { initializeBlogs } from './reducers/blogReducer'
+import { initializeBlogs, createBlog, likeBlog } from './reducers/blogReducer'
+import { setNotification } from './reducers/notificationReducer'
 
 const App = () => {
   const dispatch = useDispatch()
   const blogs = useSelector(state => state.blogs)
+  const notification = useSelector(state => state.notification)
 
-  // const [ blogs, setBlogs ] = useState([])
   const [ username, setUsername ] = useState('')
   const [ password, setPassword ] = useState('')
   const [ user, setUser ] = useState(null)
-  const [ notification, setNotification ] = useState(null)
+  // const [ notification, setNotification ] = useState(null)
 
-  // useEffect(() => {
-  //   blogService.getAll().then(blogs =>
-  //     setBlogs( sortBlogs(blogs) )
-  //   )
-  // }, [])
   useEffect(() => {
     dispatch(initializeBlogs())
   }, [dispatch])
-
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -38,10 +33,13 @@ const App = () => {
   }, [])
 
   const notifyWith = (message, type='success') => {
-    setNotification({ message, type })
-    setTimeout(() => {
-      setNotification(null)
-    }, 5000)
+    setNotification(message, type)
+    console.log(notification)
+
+    // setNotification({ message, type })
+    // setTimeout(() => {
+    //   setNotification(null)
+    // }, 5000)
   }
 
   const login = async (event) => {
@@ -69,10 +67,8 @@ const App = () => {
     try {
       blogFormRef.current.toggleVisibility()
 
-      const returnedBlog = await blogService.create(blogObject)
-      // setBlogs( sortBlogs(blogs.concat(returnedBlog)) )
-
-      notifyWith(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
+      createBlog(blogObject)
+      notifyWith(`a new blog ${blogObject.title} by ${blogObject.author} added`)
     } catch(exception) {
       notifyWith('title or author invalid', 'error')
       console.log(exception)
@@ -144,7 +140,7 @@ const App = () => {
   }
 
   const byLikes = (b1, b2) => b2.likes - b1.likes
-  
+
   return (
     <div>
       <h1>blogs</h1>
