@@ -11,6 +11,7 @@ import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Users from './components/Users'
+import User from './components/User'
 import storage from './utils/storage'
 
 import { initializeBlogs, createBlog } from './reducers/blogReducer'
@@ -97,6 +98,9 @@ const App = () => {
           </Route>
           <Route exact path="/users">
             <Users />
+          </Route>
+          <Route exact path="/users/:id">
+            <User />
           </Route>
         </Switch>
       </div>
