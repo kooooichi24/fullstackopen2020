@@ -1,5 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import {
+  BrowserRouter as Router,
+  Switch, Route, Link
+} from 'react-router-dom'
 
 import Blog from './components/Blog'
 import Notification from './components/Notification'
@@ -71,27 +75,32 @@ const App = () => {
   const byLikes = (b1, b2) => b2.likes - b1.likes
 
   return (
-    <div>
-      <h1>blogs</h1>
-      <Notification notification={notification} />
+    <Router>
+      <div>
+        <h1>blogs</h1>
+        <Notification notification={notification} />
+        <span>
+          {user.username} logged in <button onClick={handleLogout}>logout</button>
+        </span>
 
-      <span>
-        {user.username} logged in <button onClick={handleLogout}>logout</button>
-      </span>
-
-      {blogForm()}
-
-      {blogs.sort(byLikes).map(blog =>
-        <Blog
-          key={blog.id}
-          blog={blog}
-          user={user}
-        />
-      )}
-
-
-      <Users />
-    </div>
+        <Switch>
+          <Route exact path="/">
+            {blogForm()}
+    
+            {blogs.sort(byLikes).map(blog =>
+              <Blog
+                key={blog.id}
+                blog={blog}
+                user={user}
+              />
+            )}
+          </Route>
+          <Route exact path="/users">
+            <Users />
+          </Route>
+        </Switch>
+      </div>
+    </Router>
   )
 }
 
