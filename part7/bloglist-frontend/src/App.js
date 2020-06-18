@@ -49,7 +49,7 @@ const App = () => {
       <div>
         <h2>Login to application</h2>
 
-        <Notification notification={notification} />
+        <Notification />
         <LoginForm />
       </div>
     )
@@ -60,7 +60,7 @@ const App = () => {
       <div>
         <NavBar />
         <h1>blogs app</h1>
-        <Notification notification={notification} />
+        <Notification />
 
         <Switch>
           <Route exact path="/">
