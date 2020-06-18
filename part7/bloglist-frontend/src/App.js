@@ -13,10 +13,11 @@ import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Users from './components/Users'
 import User from './components/User'
+import NavBar from './components/NavBar'
 import storage from './utils/storage'
 
 import { initializeBlogs, createBlog } from './reducers/blogReducer'
-import { login, logout } from './reducers/userReducer'
+import { login } from './reducers/userReducer'
 import { setNotification } from './reducers/notificationReducer'
 import { initializeUsers } from './reducers/usersReducer'
 
@@ -35,21 +36,10 @@ const App = () => {
     }
   }, [dispatch])
 
-  const addBlog = async (blogObject) => {
-    try {
-      blogFormRef.current.toggleVisibility()
-
-      dispatch(createBlog(blogObject))
-      dispatch(setNotification(`a new blog ${blogObject.title} by ${blogObject.author} added`))
-    } catch(exception) {
-      dispatch(setNotification('title or author invalid', 'error'))
-      console.log(exception)
-    }
-  }
-
-  const handleLogout = () => {
-    dispatch(logout())
-    storage.loadUser()
+  const addBlog = (blog) => {
+    blogFormRef.current.toggleVisibility()
+    dispatch(createBlog(blog))
+    dispatch(setNotification(`a new blog ${blog.title} by ${blog.author} added`))
   }
 
   const blogFormRef = React.createRef()
@@ -68,11 +58,9 @@ const App = () => {
   return (
     <Router>
       <div>
-        <h1>blogs</h1>
+        <NavBar />
+        <h1>blogs app</h1>
         <Notification notification={notification} />
-        <span>
-          {user.username} logged in <button onClick={handleLogout}>logout</button>
-        </span>
 
         <Switch>
           <Route exact path="/">
