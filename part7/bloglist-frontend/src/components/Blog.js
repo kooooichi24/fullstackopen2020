@@ -1,68 +1,43 @@
-import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import React from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 
 import { likeBlog, removeBlog } from '../reducers/blogReducer'
-import { setNotification } from '../reducers/notificationReducer'
-// import { useParams, useHistory } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 
-const Blog = ({ blog, user }) => {
+const Blog = () => {
+  const { id } = useParams()
+  const blog = useSelector(state => state.blogs.find(b => b.id === id))
+  const user = useSelector(state => state.user)
   const dispatch = useDispatch()
-  // const id = useParams().id
-  // console.log(id)
+  const history = useHistory()
 
-  const [ visible, setVisible ] = useState(false)
+  const own = user && user.username === blog.user.username
 
-  const button_text = visible ? 'hide' : 'view'
-  const viewInfo = { display: visible ? '' : 'none' }
-  const deleteBottonView = () => {
-    if (!blog.user) {
-      return { display: 'none' }
-    }
-    return { display: blog.user.username !== user.username ? 'none' : '' }
-  }
-
-  const toggleVisibility = () => {
-    setVisible(!visible)
-  }
-
-  const incrementLike = () => {
+  const handleLike = () => {
     dispatch(likeBlog(blog))
   }
 
-  const onRemoveBlog = () => {
-    console.log('click remove botton')
+  const handleRemove = () => {
     const ok = window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
     if (ok) {
       dispatch(removeBlog(blog.id))
-      dispatch(setNotification(`succeed delete blog: ${blog.title}`))
+      history.push('/')
     }
   }
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
-
   return (
-    <div style={blogStyle} className='blog'>
+    <div className='blog'>
+      <h3>{blog.title} by {blog.author}</h3>
       <div>
-        {blog.title}
-        <button onClick={toggleVisibility}>{button_text}</button>
-      </div>
-      <div style={viewInfo} className='viewInfo'>
-        <div>{blog.url}</div>
+        <div><a href={blog.url}>{blog.url}</a></div>
         <div>
           likes {blog.likes}
-          <button onClick={incrementLike} className='likeButton'>like</button>
+          <button onClick={handleLike} className='likeButton'>like</button>
         </div>
-        <div>{blog.author}</div>
-
-        <button style={deleteBottonView()} onClick={onRemoveBlog}>
-            remove
-        </button>
+        {own && <button onClick={handleRemove}>remove</button>}
+        <div>
+          added by {blog.user.username}
+        </div>
       </div>
     </div>
   )
