@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-
+import Comments from './Comments'
 import { likeBlog, removeBlog } from '../reducers/blogReducer'
 import { useParams, useHistory } from 'react-router-dom'
 
@@ -39,6 +39,8 @@ const Blog = () => {
           added by {blog.user.username}
         </div>
       </div>
+
+      <Comments />
     </div>
   )
 }

@@ -23,7 +23,6 @@ import { initializeUsers } from './reducers/usersReducer'
 
 const App = () => {
   const user = useSelector(state => state.user)
-  const notification = useSelector(state => state.notification)
   const dispatch = useDispatch()
 
   useEffect(() => {
