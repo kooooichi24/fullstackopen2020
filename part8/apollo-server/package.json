@@ -1,0 +1,11 @@
+{
+  "name": "apollo-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "apollo-server": "^2.15.0",
+    "graphql": "^15.1.0"
+  }
+}
