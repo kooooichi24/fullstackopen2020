@@ -1,5 +1,6 @@
 const { ApolloServer, gql } = require('apollo-server')
 
+// dataset
 let authors = [
   {
     name: 'Robert Martin',
@@ -25,11 +26,6 @@ let authors = [
     id: "afa5b6f3-344d-11e9-a414-719c6709cf3e",
   },
 ]
-
-/*
- * Saattaisi olla järkevämpää assosioida kirja ja sen tekijä tallettamalla kirjan yhteyteen tekijän nimen sijaan tekijän id
- * Yksinkertaisuuden vuoksi tallennamme kuitenkin kirjan yhteyteen tekijän nimen
-*/
 
 let books = [
   {
@@ -83,16 +79,23 @@ let books = [
   },
 ]
 
+// define GraphQL schema
 const typeDefs = gql`
   type Query {
+    bookCount: Int!
+    authorCount: Int!
   }
 `
 
+// resolver
 const resolvers = {
   Query: {
+    bookCount: () => books.length,
+    authorCount: () => authors.length
   }
 }
 
+// Create an instance of ApolloServer
 const server = new ApolloServer({
   typeDefs,
   resolvers,
