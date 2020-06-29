@@ -114,6 +114,15 @@ const typeDefs = gql`
     }
 `
 
+const addAuthor = (authorName) => {
+    const author = { 
+        name: authorName,
+        id: uuid(),
+        bookCount: 1
+    }
+    authors = authors.concat(author)
+}
+
 // resolver
 const resolvers = {
     Query: {
@@ -144,10 +153,8 @@ const resolvers = {
     Mutation: {
         addBook: (root, args) => {
             const isFind = authors.find(author => author.name === args.author)
-
             if (!isFind) {
-                const author = { name: args.author ,id: uuid(), bookCount: 1 }
-                authors = authors.concat(author)
+                addAuthor(args.author)
             }
 
             const book = { ...args, id: uuid() }
