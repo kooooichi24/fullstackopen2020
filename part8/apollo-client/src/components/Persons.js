@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { gql } from '@apollo/client';
-import { useLazyQuery } from '@apollo/client';
+import { gql, useLazyQuery } from '@apollo/client';
 
 const FIND_PERSON = gql`
 query findPersonByName($nameToSearch: String!) {
