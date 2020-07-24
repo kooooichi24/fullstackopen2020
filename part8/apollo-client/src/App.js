@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client';
 
 import Persons from './components/Persons';
 import PersonForm from './components/PersonForm';
+import PhoneForm from './components/PhoneForm';
 import { ALL_PERSONS } from './utils/querys';
 
 
@@ -17,6 +18,7 @@ const App = () => {
     <div>
       <Persons persons =  {result.data.allPersons} />
       <PersonForm />
+      <PhoneForm />
     </div>
   );
 }
