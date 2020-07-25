@@ -57,7 +57,7 @@ const typeDefs = gql`
             street: String!
             city: String!
         ): Person
-        editPerson(
+        editNumber(
             name: String!
             phone: String!
         ): Person
@@ -96,7 +96,7 @@ const resolvers = {
             persons = persons.concat(person)
             return person
         },
-        editPerson: (root, args) => {
+        editNumber: (root, args) => {
             const person = persons.find(p => p.name === args.name)
             if (!person) {
                 return null

@@ -10,7 +10,7 @@ const PhoneForm = () => {
   const [ changeNumber ] = useMutation(EDIT_NUMBER);
 
   const submit =  (event) => {
-    event.defaultPrevented();
+    event.preventDefault();
 
     changeNumber({ variables: { name, phone } });
 
