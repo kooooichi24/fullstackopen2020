@@ -1,11 +1,16 @@
 const { ApolloServer, UserInputError, gql } = require('apollo-server')
+const jwt = require('jsonwebtoken')
+
 const mongoose = require('mongoose')
 const Person = require('./models/person')
-const { v1: uuid } = require('uuid')
+const User = require('./models/user')
 
 mongoose.set('useFindAndModify', false)
+mongoose.set('useCreateIndex', true)
 
 const MONGODB_URI = 'mongodb+srv://fullstack:halfstack@cluster0-ostce.mongodb.net/gql-phonebook?retryWrites=true'
+
+const JWT_SECRET = 'SECRET_KEY'
 
 console.log('connecting to', MONGODB_URI)
 
@@ -19,41 +24,59 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true 
 
 // define GraphQL schema
 const typeDefs = gql` 
-    type Address {
-        street: String!
-        city: String!
-    }
+  type User {
+    username: String!
+    friends: [Person!]!
+    id: ID!
+  }
+  
+  type Token {
+    value: String!
+  }
 
-    type Person {
-        name: String!
-        phone: String
-        address: Address!
-        id: ID!
-    }
+  type Person {
+    name: String!
+    phone: String
+    address: Address!
+    id: ID!
+  }
 
-    enum YesNo {
-        YES
-        NO
-    }
+  type Address {
+    street: String!
+    city: String!
+  }
 
-    type Query {
-        personCount: Int!
-        allPersons(phone: YesNo): [Person!]!
-        findPerson(name: String!): Person
-    }
+  enum YesNo {
+    YES
+    NO
+  }
 
-    type Mutation {
-        addPerson(
-            name: String!
-            phone: String
-            street: String!
-            city: String!
-        ): Person
-        editNumber(
-            name: String!
-            phone: String!
-        ): Person
-    }
+  type Query {
+    personCount: Int!
+    allPersons(phone: YesNo): [Person!]!
+    findPerson(name: String!): Person
+    me: User
+  }
+
+  type Mutation {
+    addPerson(
+      name: String!
+      phone: String
+      street: String!
+      city: String!
+    ): Person
+    editNumber(
+      name: String!
+      phone: String!
+    ): Person
+    createUser(
+      username: String!
+    ): User
+    login(
+      username: String!
+      password: String!
+    ): Token
+  }
 `
 
 // resolver
@@ -67,7 +90,10 @@ const resolvers = {
 
       return Person.find({ phone: { $exists: args.phone === 'YES' }})
     },
-    findPerson: (root, args) => Person.findOne({ name: args.name })
+    findPerson: (root, args) => Person.findOne({ name: args.name }),
+    me: (root, args, context) => {
+      return context.currentUser
+    }
   },
   Person: {
     address: (root) => {
@@ -102,14 +128,46 @@ const resolvers = {
         })
       }
       return person
-    }
+    },
+    createUser: (root, args) => {
+      const user = new User({ username: args.name })
+
+      return user.save()
+        .catch(err => {
+          throw new UserInputError(err.message, {
+            invalidArgs: args,
+          })
+        })
+    },
+    login: async (root, args) => {
+      const user = await User.findOne({ username: args.username })
+
+      if ( !user || args.password !== 'secred' ) {
+        throw new UserInputError("wrong credentials")
+      }
+
+      const userForToken = {
+        username: args.username,
+        id: user._id,
+      }
+
+      return { value: jwt.sign(userForToken, JWT_SECRET) }
+    },
   }
 }
 
 // Create an instance of ApolloServer
 const server = new ApolloServer({
   typeDefs,
-  resolvers
+  resolvers,
+  context: async ({ req }) => {
+    const auth = req ? req.headers.authorization : null
+    if (auth && auth.toLowerCase().startsWith('bearer ')) {
+      const decodedToken = jwt.verify(auth.substring(7), jWT_SECRET)
+      const currentUser = await User.findById(decodedToken.id).populate('friends')
+      return { currentUser }
+    }
+  }
 })
 
 server.listen().then(({ url }) => {
