@@ -78,7 +78,7 @@ const resolvers = {
     }
   },
   Mutation: {
-    addPerson: (root, args) => {
+    addPerson: async (root, args) => {
       const person = new Person({ ...args })
 
       try {
