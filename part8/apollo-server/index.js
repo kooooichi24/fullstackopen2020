@@ -1,4 +1,4 @@
-const { ApolloServer, UserInputError, gql } = require('apollo-server')
+const { ApolloServer, UserInputError, gql, AuthenticationError } = require('apollo-server')
 const jwt = require('jsonwebtoken')
 
 const mongoose = require('mongoose')
@@ -76,6 +76,9 @@ const typeDefs = gql`
       username: String!
       password: String!
     ): Token
+    addAsFriend(
+      name: String!
+    ): User
   }
 `
 
@@ -104,11 +107,18 @@ const resolvers = {
     }
   },
   Mutation: {
-    addPerson: async (root, args) => {
+    addPerson: async (root, args, context) => {
       const person = new Person({ ...args })
+      const currentUser = context.currentUser
+
+      if (!currentUser) {
+        throw new AuthenticationError("not authenticated")
+      }
 
       try {
-        await person.save() 
+        await person.save()
+        currentUser.friends = currentUser.friends.concat(person)
+        await currentUser.save()
       } catch (err) {
         throw new UserInputError(err.message, {
           invalidArgs: args,
@@ -130,7 +140,7 @@ const resolvers = {
       return person
     },
     createUser: (root, args) => {
-      const user = new User({ username: args.name })
+      const user = new User({ username: args.username })
 
       return user.save()
         .catch(err => {
@@ -153,6 +163,24 @@ const resolvers = {
 
       return { value: jwt.sign(userForToken, JWT_SECRET) }
     },
+    addAsFriend: async (root, args, { currentUser }) => {
+      const nonFriendAlready = (person) => {
+        !currentUser.friends.map(f => f._id).includes(person._id)
+      }
+      
+      if (!currentUser) {
+        throw new AuthenticationError("not authenticated")
+      }
+
+      const person = await Person.findOne({ name: args.name })
+      if ( nonFriendAlready(person) ) {
+        currentUser.friends = currentUser.friends.concat(person)
+      }
+
+      await currentUser.save()
+
+      return currentUser
+    }
   }
 }
 
@@ -163,7 +191,8 @@ const server = new ApolloServer({
   context: async ({ req }) => {
     const auth = req ? req.headers.authorization : null
     if (auth && auth.toLowerCase().startsWith('bearer ')) {
-      const decodedToken = jwt.verify(auth.substring(7), jWT_SECRET)
+      const decodedToken = jwt.verify(auth.substring(7), JWT_SECRET)
+
       const currentUser = await User.findById(decodedToken.id).populate('friends')
       return { currentUser }
     }
