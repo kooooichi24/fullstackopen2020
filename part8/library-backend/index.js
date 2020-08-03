@@ -22,16 +22,16 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true 
 const typeDefs = gql`
     type Book {
         title: String!
-        author: String!
+        author: Author!
         published: Int!
         genres: [String!]!
-        id: String!
+        id: ID!
     }
 
     type Author {
         name: String!
         born: Int
-        id: String!
+        id: ID!
         bookCount: Int!
     }
 
@@ -56,13 +56,10 @@ const typeDefs = gql`
     }
 `
 
-const addAuthor = (authorName) => {
-  const author = {
-    name: authorName,
-    id: uuid(),
-    bookCount: 1
-  }
-  authors = authors.concat(author)
+const addAuthor = async (authorName) => {
+  const newAuthor = new Author({ name: authorName })
+  await newAuthor.save()
+  return newAuthor
 }
 
 // resolver
@@ -70,43 +67,45 @@ const resolvers = {
   Query: {
     bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
-    // allBooks: (root, args) => {
-    //     if (!args.author && !args.genre) {
-    //         return books
-    //     }
+    allBooks: (root, args) => {
+      if (!args.author && !args.genre) {
+        return Book.find({})
+      }
 
-    //     if (args.author && !args.genre) {
-    //         return books.filter(book => book.author.includes(args.author))
-    //     } 
-    //     if (!args.author && args.genre) {
-    //         return books.filter(book => book.genres.includes(args.genre))
-    //     }
-    //     if (args.author && args.genre) {
-    //         return books.filter(book => book.author.includes(args.author) && book.genres.includes(args.genre))
-    //     }
-    // },
-    // allAuthors: () => authors
+      // if (args.author && !args.genre) {
+      //     return books.filter(book => book.author.includes(args.author))
+      // } 
+      // if (!args.author && args.genre) {
+      //     return books.filter(book => book.genres.includes(args.genre))
+      // }
+      // if (args.author && args.genre) {
+      //     return books.filter(book => book.author.includes(args.author) && book.genres.includes(args.genre))
+      // }
+    },
+    allAuthors: () => Author.find({})
   },
-  // Author: {
-  //     bookCount: (root) => {
-  //         return books.filter(book => book.author === root.name).length
-  //     }
-  // },
+  Author: {
+    bookCount: async (root) => {
+      return await Book.collection.countDocuments({ author: root._id })
+    }
+  },
   Mutation: {
     addBook: async (root, args) => {
       const author = await Author.findOne({ name: args.author })
       if (!author) {
-        const newAuthor = new Author({ name: args.author })
-        newAuthor.save()
+        author = addAuthor(args.author)
       }
-      
+
+      console.log('author: ', author);
+
       const book = new Book({
         title: args.title,
         published: args.published,
         author: author,
-        genre: args.genre
+        genres: args.genres
       })
-      book.save()
+
+      await book.save()
       return book
     },
     //     editAuthor: (root, args) => {
