@@ -109,12 +109,13 @@ const resolvers = {
       return book
     },
     editAuthor: async (root, args) => {
-      const updatedAuthor = await Author.update(
+      const updatedAuthor = await Author.findOneAndUpdate(
         { name: args.name },
-        { $set: { born: args.setBornTo } }
+        { $set: { born: args.setBornTo } },
+        { "new": true }
       )
-
-      return Author.findOne({ name: args.name })
+      
+      return updatedAuthor
     }
   }
 }
