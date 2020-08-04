@@ -6,7 +6,9 @@ const Author = require('./models/author')
 mongoose.set('useFindAndModify', false)
 mongoose.set('useCreateIndex', true)
 
-const MONGODB_URI = 'mongodb+srv://fullstack:halfstack@cluster0-ostce.mongodb.net/gql-phonebook?retryWrites=true'
+const password = process.argv[2]
+const MONGODB_URI = `mongodb+srv://kooooichi24:${password}@cluster0-xkbv6.mongodb.net/library-app?retryWrites=true`
+// const MONGODB_URI = 'mongodb+srv://fullstack:halfstack@cluster0-ostce.mongodb.net/gql-phonebook?retryWrites=true'
 
 console.log('connecting to ', MONGODB_URI)
 
@@ -69,7 +71,7 @@ const resolvers = {
     authorCount: () => Author.collection.countDocuments(),
     allBooks: (root, args) => {
       if (!args.author && !args.genre) {
-        return Book.find({})
+        return Book.find({}).populate('author')
       }
 
       // if (args.author && !args.genre) {
@@ -91,12 +93,10 @@ const resolvers = {
   },
   Mutation: {
     addBook: async (root, args) => {
-      const author = await Author.findOne({ name: args.author })
+      let author = await Author.findOne({ name: args.author })
       if (!author) {
-        author = addAuthor(args.author)
+        author = await addAuthor(args.author)
       }
-
-      console.log('author: ', author);
 
       const book = new Book({
         title: args.title,
