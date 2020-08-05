@@ -58,9 +58,17 @@ const typeDefs = gql`
     }
 `
 
-const addAuthor = async (authorName) => {
-  const newAuthor = new Author({ name: authorName })
-  await newAuthor.save()
+const addAuthor = async (args) => {
+  const newAuthor = new Author({ name: args.author })
+
+  try {
+    await newAuthor.save()
+  } catch (err) {
+    throw new UserInputError(err.message, {
+      invalidArgs: args
+    })
+  }
+  
   return newAuthor
 }
 
@@ -73,16 +81,6 @@ const resolvers = {
       if (!args.author && !args.genre) {
         return Book.find({}).populate('author')
       }
-
-      // if (args.author && !args.genre) {
-      //     return books.filter(book => book.author.includes(args.author))
-      // } 
-      // if (!args.author && args.genre) {
-      //     return books.filter(book => book.genres.includes(args.genre))
-      // }
-      // if (args.author && args.genre) {
-      //     return books.filter(book => book.author.includes(args.author) && book.genres.includes(args.genre))
-      // }
     },
     allAuthors: () => Author.find({})
   },
@@ -95,7 +93,7 @@ const resolvers = {
     addBook: async (root, args) => {
       let author = await Author.findOne({ name: args.author })
       if (!author) {
-        author = await addAuthor(args.author)
+        author = await addAuthor(args)
       }
 
       const book = new Book({
@@ -105,15 +103,30 @@ const resolvers = {
         genres: args.genres
       })
 
-      await book.save()
+      try {
+        await book.save()
+      } catch (err) {
+        throw new UserInputError(err.message, {
+          invalidArgs: args,
+        })
+      }
+      
       return book
     },
     editAuthor: async (root, args) => {
-      const updatedAuthor = await Author.findOneAndUpdate(
-        { name: args.name },
-        { $set: { born: args.setBornTo } },
-        { "new": true }
-      )
+      let updatedAuthor
+      try {
+        updatedAuthor = await Author.findOneAndUpdate(
+          { name: args.name },
+          { $set: { born: args.setBornTo } },
+          { "new": true }
+        )
+      } catch (err) {
+        throw new UserInputError(err.message, {
+          invalidArgs: args
+        })
+      }
+      
       
       return updatedAuthor
     }
