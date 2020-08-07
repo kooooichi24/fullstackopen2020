@@ -8,7 +8,8 @@ const User = require('./models/user')
 mongoose.set('useFindAndModify', false)
 mongoose.set('useCreateIndex', true)
 
-const MONGODB_URI = 'mongodb+srv://fullstack:halfstack@cluster0-ostce.mongodb.net/gql-phonebook?retryWrites=true'
+const password = process.argv[2]
+const MONGODB_URI = `mongodb+srv://kooooichi24:${password}@cluster0-xkbv6.mongodb.net/gql-phonebook?retryWrites=true`
 
 const JWT_SECRET = 'SECRET_KEY'
 

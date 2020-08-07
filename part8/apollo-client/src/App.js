@@ -4,10 +4,22 @@ import { useQuery } from '@apollo/client';
 import Persons from './components/Persons';
 import PersonForm from './components/PersonForm';
 import PhoneForm from './components/PhoneForm';
-import { ALL_PERSONS } from './utils/querys';
+import LoginForm from './components/LoginForm';
+import { ALL_PERSONS } from './utils/queries';
 
+const Notify = ({ errorMessage }) => {
+  if (!errorMessage) {
+    return null;
+  }
+  return (
+    <div style = {{ color: 'red'}}>
+      {errorMessage}
+    </div>
+  )
+}
 
 const App = () => {
+  const [ token, setToken ] = useState(null)
   const [ errorMessage, setErrorMessage] = useState(null);
   const result = useQuery(ALL_PERSONS)
 
@@ -22,6 +34,19 @@ const App = () => {
     }, 5000);
   };
 
+  if (!token) {
+    return (
+      <div>
+        <Notify errorMessage={errorMessage} />
+        <h2>Login</h2>
+        <LoginForm
+          setToken={setToken}
+          setError={notify}
+        />
+      </div>
+    )
+  }
+
   return (
     <div>
       <Notify errorMessage={errorMessage} />
@@ -30,17 +55,6 @@ const App = () => {
       <PhoneForm setError={notify} />
     </div>
   );
-}
-
-const Notify = ({ errorMessage }) => {
-  if (!errorMessage) {
-    return null;
-  }
-  return (
-    <div style = {{ color: 'red'}}>
-      {errorMessage}
-    </div>
-  )
 }
 
 export default App;
