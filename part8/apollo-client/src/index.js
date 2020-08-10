@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom';
 import App from './App';
 
 import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache } from '@apollo/client'
-import { setContext } from '@apollo-link-context'
+import { setContext } from 'apollo-link-context'
 
-const authLink = setCotext((_, { headers }) => {
+const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('phonenumbers-user-token')
 
   return {
