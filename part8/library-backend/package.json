@@ -5,7 +5,7 @@
   "author": "Koichi Furukawa",
   "license": "MIT",
   "dependencies": {
-    "apollo-server": "^2.15.0",
+    "apollo-server": "^2.25.3",
     "gql": "^1.1.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.27",
